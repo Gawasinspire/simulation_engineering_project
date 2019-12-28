@@ -8,17 +8,16 @@ from numpy import random
 
 #initial conditions
 
-#overall Functions
+#features:
 
-    #Generate cars in random 1 to 5 min 
-    #timer of dt 5 seconds interval
-    #function to change light
-    #Detector to check comming car
-    #car queue function 
+    #Generate cars in random 1 to 5 min ------no,not yet  
+    #timer of dt 5 seconds interval -----no because car could arrive in anytime
+    #function to change light-------okay
+    #Detector to check comming car-------okay
+    #car queue function ---------okay
 
 #states:
-    # main road states
-    # secondary road states
+
 class State:
     def __init__(self):
         self.red = True
@@ -61,7 +60,7 @@ class State:
         """
         print("green")
         self.green = True
-    def turn_yellow():
+    def turn_yellow(self):
         """
 		The light turns yellow
 		"""
@@ -78,17 +77,6 @@ class State:
         Displays the status of the crossroads
         """
         return "Green light =" + str(self.green) + ", cars=" + str(self.cars)
-
-#events
-    #main events
-    #secondary events
-
-#main drivers
-    
-
-
-### STATE ##########################################
-
 
 ### EVENTS ###########################################
 
@@ -117,24 +105,31 @@ class CAR(Event):
         self.t = time
         self.name = "CAR"
     def action(self,queue,state):
-        if not state.is_green():
+        if state.is_green():
             state.add_car()
-            if state.waiting_cars() == 1:
-                queue.insert(R2G(self.t+Tc))
+            print("Detector:car detected in green")
+            queue.insert(G2Y(self.t+5))
+            queue.insert(Y2R(self.t+55))
+            queue.insert(R2G(self.t+180))
 
 class R2G(Event):
     def __init__(self,time):
         self.t = time
         self.name = "R2G"
     def action(self,queue,state):
-        queue.insert( G2R( self.t + state.waiting_cars() * Tp ) )
-        state.turn_green()
-        state.purge_cars()
+        state.turn_green()        
 
-class G2R(Event):
+class G2Y(Event):
     def __init__(self,time):
         self.t = time
-        self.name = "G2R"
+        self.name = "G2Y"
+    def action(self,queue,state):
+        state.turn_yellow()
+
+class Y2R(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "Y2R"
     def action(self,queue,state):
         state.turn_red()
 
@@ -164,12 +159,21 @@ class EventQueue:
       """
       return heappop( self.q )
 
-### MAIN #####################################################
 
+### MAIN #####################################################
+a=5
 Q = EventQueue()
 
-Q.insert( CAR(74) ) 
-Q.insert( CAR(75) )
+Q.insert( R2G(a*32) ) 
+Q.insert( G2Y(a) )
+Q.insert( Y2R(a*11) )
+
+Q.insert(CAR(170))
+Q.insert(CAR(4))
+Q.insert((CAR(30)))
+
+
+
 
 # For advanced sim , uncomment these lines
 #random.seed(1)
@@ -189,9 +193,8 @@ while Q.notEmpty():
     print( e )
     e.action(Q,S)
 
+# What to display 
 
-# What to display or sample display
-
-#print main road () 
-#print secondary road ()
+#print main road lights() 
+#print secondary road lights ()
 #print car status
