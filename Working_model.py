@@ -58,19 +58,19 @@ class State:
         """
         The light turns green
         """
-        print("green")
+        print("green\t\tRed")
         self.green = True
     def turn_yellow(self):
         """
 		The light turns yellow
 		"""
-        print("yellow")
+        print("yellow\t\tRed")
         self.yellow = True
     def turn_red(self):
         """
         The light turns red
         """
-        print("red")
+        print("red\t\tgreen (self-given time)-5sec=[yellow]")
         self.red = True
     def __str__(self):
         """
