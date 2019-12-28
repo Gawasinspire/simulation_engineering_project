@@ -1,6 +1,8 @@
 #simulation_project
 
 #headers
+from random import seed
+from random import randint
 
 from heapq import *
 from numpy import random
@@ -161,6 +163,14 @@ class EventQueue:
 a=5
 Q = EventQueue()
 
+# seed random number generator
+seed(1)
+# generate some integers
+for _ in range(10):
+    a = randint(0, 3)
+print(a)
+
+
 Q.insert( R2G(a*32) ) 
 Q.insert( G2Y(a) )
 Q.insert( Y2R(a*11) )
@@ -170,16 +180,6 @@ Q.insert(CAR(4))
 Q.insert((CAR(30)))
 
 
-
-
-# For advanced sim , uncomment these lines
-#random.seed(1)
-#additionalNumCarInQueue=100
-#tRandom = 80
-#for i in range(1, additionalNumCarInQueue):
-#    tRandom = random.randint(tRandom+1, tRandom+10)
-#    Q.insert( CAR(tRandom) )  
-    
 
 S = State()
 
