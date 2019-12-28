@@ -80,9 +80,6 @@ class State:
 
 ### EVENTS ###########################################
 
-Tc = 30 # Time latency to change the traffic lights from red to green once a car is found waiting in the queue
-Tp = 10 # Passage time
-
 class Event:
     def time(self):
         """
