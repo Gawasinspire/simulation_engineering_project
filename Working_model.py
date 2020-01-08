@@ -60,26 +60,31 @@ class State:
         """
         The light turns green
         """
-        print("green\t\tRed")
+        print("\t\t\t\tGREEN\t\tred")
         self.green = True
     def turn_yellow(self):
         """
 		The light turns yellow
 		"""
-        print("yellow\t\tRed")
+        print("\t\t\t\tYELLOW\t\tred")
         self.yellow = True
-    def turn_red(self):
+    def turn_red1(self):
         """
-        The light turns red
+        The light turns red green
         """
-        print("red\t\tgreen (self-given time)-5sec=[yellow]")
+        print("\t\t\t\tRED\t\tgreen ")
         self.red = True
+    def turn_red2(self):
+        """
+        The light turn red yellow
+        """
+        print("\t\t\t\tRED\t\tyellow")
     def __str__(self):
         """
         Displays the status of the crossroads
         """
         return "Green light =" + str(self.green) + ", cars=" + str(self.cars)
-
+ 
 ### EVENTS ###########################################
 
 class Event:
@@ -108,7 +113,7 @@ class CAR(Event):
             state.add_car()
             print("Detector:car detected in green")
             queue.insert(G2Y(self.t+5))
-            queue.insert(Y2R(self.t+55))
+            queue.insert(Y2R1(self.t+50))
             queue.insert(R2G(self.t+180))
 
 class R2G(Event):
@@ -125,12 +130,20 @@ class G2Y(Event):
     def action(self,queue,state):
         state.turn_yellow()
 
-class Y2R(Event):
+class Y2R1(Event):
     def __init__(self,time):
         self.t = time
         self.name = "Y2R"
     def action(self,queue,state):
-        state.turn_red()
+        state.turn_red1()
+        queue.insert(Y2R2(self.t+5))
+
+class Y2R2(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "Y2R"
+    def action(self,queue,state):
+        state.turn_red2()
 
 ### EVENT QUEUE ##############################################
 
@@ -163,21 +176,29 @@ class EventQueue:
 a=5
 Q = EventQueue()
 
+print("cars(time)\t\tmain road signal\tsecondary road signal")
 # seed random number generator
 seed(1)
 # generate some integers
-for _ in range(10):
-    a = randint(0, 3)
-print(a)
+#for _ in range(10):
+b = randint(-1,3)
+print(b)
 
-
+a=5
 Q.insert( R2G(a*32) ) 
 Q.insert( G2Y(a) )
-Q.insert( Y2R(a*11) )
+Q.insert( Y2R1(a*10) )
 
-Q.insert(CAR(170))
+"""
+random.seed(1)
+additionalNumCarInQueue=100
+tRandom = 80
+for i in range(1, additionalNumCarInQueue):
+    tRandom = random.randint(tRandom+1, tRandom+10)
+    Q.insert( CAR(tRandom) )  
+"""
 Q.insert(CAR(4))
-Q.insert((CAR(30)))
+Q.insert(CAR(30))
 
 
 
