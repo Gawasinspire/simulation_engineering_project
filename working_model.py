@@ -209,6 +209,9 @@ for i in range(0, additionalNumCarInQueue):
     print(tRandom)
     Q.insert( CAR(tRandom) )
 
+
+print("cars(time)\t\tmain road signal\tsecondary road signal")
+
 Q.insert(nocar(0))
 S = State()
 
