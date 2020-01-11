@@ -203,7 +203,7 @@ additionalNumCarInQueue = random.randint(0,5)
 print("additionalNumCarInQueue")
 print(additionalNumCarInQueue)
 for i in range(0, additionalNumCarInQueue):
-    tRandom = random.randint(0, 240)
+    tRandom = random.randint(0, 100)
     #randomisation part2: time in random
     print("tRandom")
     print(tRandom)
