@@ -3,20 +3,18 @@
 #headers
 from random import seed
 from random import randint
-
 from heapq import *
 from numpy import random
 
-
+"""
 #initial conditions
-
-#features:
-
-    #Generate cars in random 1 to 5 min ------no,not yet  
-    #timer of dt 5 seconds interval -----no because car could arrive in anytime
-    #function to change light-------okay
-    #Detector to check comming car-------okay
-    #car queue function ---------okay
+simulation time 20 minutes = 1200 seconds
+yellow= 5 + red =55 + green=180/= 240
+1200/240= 5 for simplicity
+traffic signals from yellow red green if and only if car detected 
+in green then changes immediatly to yellow and continues
+"""
+simulation_time=5
 
 #states:
 
@@ -116,8 +114,8 @@ class CAR(Event):
             queue.next()
             queue.next()
             queue.insert(G2Y(self.t+5))
-            queue.insert(Y2R1(self.t+50))
-            queue.insert(R2G(self.t+180))
+            queue.insert(Y2R1(self.t+55))
+            queue.insert(R2G(self.t+240))
 
 class R2G(Event):
     def __init__(self,time):
@@ -179,42 +177,41 @@ class EventQueue:
 
 Q = EventQueue()
 
-print("cars(time)\t\tmain road signal\tsecondary road signal")
 # seed random number generator
 
 class nocar(Event):
     def __init__(self,time):
         self.t = time
         self.name = "nocar"
+        
     def action(self,queue,state):    
         a=5
         b=50
-        c=180     
-        for x in range(0, 2, 1):
-            queue.insert(G2Y(self.t+a))
-            queue.insert(Y2R1(self.t+b))
-            queue.insert(R2G(self.t+c))
-            a=a+180
-            b=b+185
-            c=c+235
-
+        c=180
+        queue.insert(CAR(721) )
+        print("Defined time for car1:241")
+        for i in range(0, additionalNumCarInQueue):
+            tRandom = random.randint(0,1200)
+            print("Random time for car"+ str(i+2)+":"+str(tRandom))
+            queue.insert( CAR(tRandom) )
+        print("cars(EventEndTime)\tmain road signal\tsecondary road signal")
+        for x in range(0, simulation_time, 1):
+            self.t=self.t+a
+            queue.insert(G2Y(self.t))
+            self.t=self.t+b
+            queue.insert(Y2R1(self.t))
+            self.t=self.t+c+5
+            queue.insert(R2G(self.t))
+            
 #randomisation part1: number of cars 
-additionalNumCarInQueue = random.randint(0,5) 
-print("additionalNumCarInQueue")
-print(additionalNumCarInQueue)
-for i in range(0, additionalNumCarInQueue):
-    tRandom = random.randint(0, 100)
-    #randomisation part2: time in random
-    print("tRandom")
-    print(tRandom)
-    Q.insert( CAR(tRandom) )
-
-
-print("cars(time)\t\tmain road signal\tsecondary road signal")
+additionalNumCarInQueue = random.randint(0,5) +1
+print('additionalNumCarInQueue:' + str(additionalNumCarInQueue) )
 
 Q.insert(nocar(0))
+
 S = State()
 
+#print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
 #Main driver
 # Processing events until the queue is Q is empty
 while Q.notEmpty():
