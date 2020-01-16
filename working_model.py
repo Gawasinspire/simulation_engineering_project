@@ -58,25 +58,26 @@ class State:
         """
         The light turns green
         """
-        print("\t\t\t\tGREEN\t\tred")
+        #print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
+        print("\t\t\t\t\033[0;32;40m Green\t\t\033[0;31;40m Red\033[0;37;40m")
         self.green = True
     def turn_yellow(self):
         """
 		The light turns yellow
 		"""
-        print("\t\t\t\tYELLOW\t\tred")
+        print("\t\t\t\t\033[1;33;40m Yellow\t\t\033[0;31;40m Red\033[0;37;40m")
         self.yellow = True
     def turn_red1(self):
         """
         The light turns red green
         """
-        print("\t\t\t\tRED\t\tgreen ")
+        print("\t\t\t\t\033[0;31;40m Red\t\t\033[0;32;40m Green\033[0;37;40m")
         self.red = True
     def turn_red2(self):
         """
         The light turn red yellow
         """
-        print("\t\t\t\tRED\t\tyellow")
+        print("\t\t\t\t\033[0;31;40m Red\t\t\033[1;33;40m Yellow\033[0;37;40m")
     def __str__(self):
         """
         Displays the status of the crossroads
@@ -188,10 +189,10 @@ class nocar(Event):
         a=5
         b=50
         c=180
-        queue.insert(CAR(721) )
-        print("Defined time for car1:241")
+        queue.insert(CAR(961) )
+        print("Defined time for car1:961")
         for i in range(0, additionalNumCarInQueue):
-            tRandom = random.randint(0,1200)
+            tRandom = random.randint(0,100)
             print("Random time for car"+ str(i+2)+":"+str(tRandom))
             queue.insert( CAR(tRandom) )
         print("cars(EventEndTime)\tmain road signal\tsecondary road signal")
@@ -211,7 +212,7 @@ Q.insert(nocar(0))
 
 S = State()
 
-#print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
+print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
 #Main driver
 # Processing events until the queue is Q is empty
 while Q.notEmpty():
