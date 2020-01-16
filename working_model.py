@@ -13,22 +13,32 @@ yellow= 5 + red =55 + green=180/= 240
 1200/240= 5 for simplicity
 traffic signals from yellow red green if and only if car detected 
 in green then changes immediatly to yellow and continues
+
+#features:
+
+    #Generate cars in random 1 to 5 min ------ok 
+    #function to change light-----------------ok
+    #Detector to check comming car------------ok
+    #car queue function ----------------------ok
+    #continuation of change in lights---------ok
+    $
+
 """
 simulation_time=5
-
+car_detected=0
 #states:
 
 class State:
     def __init__(self):
-        self.red = True
+        self.red = False
         self.green = False
-        self.yellow = False
+        self.yellow = True
         self.cars = 0
     def is_green(self):
         """
         True if the light is green
         """
-        return self.green
+        return self.green 
     def is_red(self):
     	"""
     	True if the light is red
@@ -59,25 +69,34 @@ class State:
         The light turns green
         """
         #print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
-        print("\t\t\t\t\033[0;32;40m Green\t\t\033[0;31;40m Red\033[0;37;40m")
+        print("\t\t\t180\t\033[0;32;40m Green\t\t\033[0;31;40m Red\033[0;37;40m")
         self.green = True
+        self.yellow = False
+        self.red = False
     def turn_yellow(self):
         """
 		The light turns yellow
 		"""
-        print("\t\t\t\t\033[1;33;40m Yellow\t\t\033[0;31;40m Red\033[0;37;40m")
+        print("\t\t\t5\t\033[1;33;40m Yellow\t\t\033[0;31;40m Red\033[0;37;40m")
+        self.green = False
         self.yellow = True
+        self.red = False
     def turn_red1(self):
         """
         The light turns red green
         """
-        print("\t\t\t\t\033[0;31;40m Red\t\t\033[0;32;40m Green\033[0;37;40m")
+        print("\t\t\t50\t\033[0;31;40m Red\t\t\033[0;32;40m Green\033[0;37;40m")
+        self.green = False
+        self.yellow = False
         self.red = True
     def turn_red2(self):
         """
         The light turn red yellow
         """
-        print("\t\t\t\t\033[0;31;40m Red\t\t\033[1;33;40m Yellow\033[0;37;40m")
+        print("\t\t\t5\t\033[0;31;40m Red\t\t\033[1;33;40m Yellow\033[0;37;40m")
+        self.green = False
+        self.yellow = False
+        self.red = True
     def __str__(self):
         """
         Displays the status of the crossroads
@@ -101,51 +120,64 @@ class Event:
         """
         Compares the event with another sorted by processing order priority
         """
+        self.duration = -1
         return self.t < other.t
+
+class R2G(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "R2G"
+        self.duration = 180
+    def action(self,queue,state):
+        state.turn_green()
+        return self.t        
+
+class G2Y(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "G2Y"
+        self.duration = 5
+    def action(self,queue,state):
+        state.turn_yellow()
+        return self.t
+
+class Y2R1(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "Y2R1"
+        self.duration = 50
+    def action(self,queue,state):
+        state.turn_red1()
+        queue.insert(Y2R2(self.t+5))
+        return self.t
+        
+class Y2R2(Event):
+    def __init__(self,time):
+        self.t = time
+        self.name = "Y2R2"
+        self.duration = 5
+    def action(self,queue,state):
+        state.turn_red2()
+        return self.t
     
 class CAR(Event):
     def __init__(self,time):
         self.t = time
         self.name = "CAR"
     def action(self,queue,state):
+        state.add_car()
         if state.is_green():
-            state.add_car()
             print("Detector:car detected in green")
+            global car_detected
             queue.next()
             queue.next()
             queue.next()
             queue.insert(G2Y(self.t+5))
-            queue.insert(Y2R1(self.t+55))
+            self.t=self.t+5
+            queue.insert(Y2R1(self.t+50))
+            self.t+=50
             queue.insert(R2G(self.t+240))
-
-class R2G(Event):
-    def __init__(self,time):
-        self.t = time
-        self.name = "R2G"
-    def action(self,queue,state):
-        state.turn_green()        
-
-class G2Y(Event):
-    def __init__(self,time):
-        self.t = time
-        self.name = "G2Y"
-    def action(self,queue,state):
-        state.turn_yellow()
-
-class Y2R1(Event):
-    def __init__(self,time):
-        self.t = time
-        self.name = "Y2R"
-    def action(self,queue,state):
-        state.turn_red1()
-        queue.insert(Y2R2(self.t+5))
-
-class Y2R2(Event):
-    def __init__(self,time):
-        self.t = time
-        self.name = "Y2R"
-    def action(self,queue,state):
-        state.turn_red2()
+            self.t+=240
 
 ### EVENT QUEUE ##############################################
 
@@ -174,10 +206,6 @@ class EventQueue:
       return heappop( self.q )
 
 
-### MAIN #####################################################
-
-Q = EventQueue()
-
 # seed random number generator
 
 class nocar(Event):
@@ -185,37 +213,47 @@ class nocar(Event):
         self.t = time
         self.name = "nocar"
         
-    def action(self,queue,state):    
-        a=5
-        b=50
-        c=180
-        queue.insert(CAR(961) )
+    def action(self,queue,state):
+        c_time=241
+        car_event = CAR(c_time)
+        #queue.insert(car_event)
         print("Defined time for car1:961")
-        for i in range(0, additionalNumCarInQueue):
-            tRandom = random.randint(0,100)
-            print("Random time for car"+ str(i+2)+":"+str(tRandom))
-            queue.insert( CAR(tRandom) )
-        print("cars(EventEndTime)\tmain road signal\tsecondary road signal")
+        print("cars(EventStartTime)\tdur:\tmain road signal\tsecondary road signal")
         for x in range(0, simulation_time, 1):
-            self.t=self.t+a
-            queue.insert(G2Y(self.t))
-            self.t=self.t+b
-            queue.insert(Y2R1(self.t))
-            self.t=self.t+c+5
-            queue.insert(R2G(self.t))
+            queue.insert(G2Y(self.t+ G2Y(0).duration))
+            self.t+= G2Y(0).duration
+            queue.insert(Y2R1(self.t+Y2R1(0).duration))
+            self.t+= Y2R1(0).duration+5
+            queue.insert(R2G(self.t+R2G(0).duration))
+            self.t+= R2G(0).duration
+            green_timestamp = self.t
+            #print("green_timestamp"+str(green_timestamp))
+            #print("c_time"+str(c_time))
+            car_detected=1
+            if((car_detected==1) and (green_timestamp < c_time)):
+                #self.t=c_time+300
+                car_detected=0
             
 #randomisation part1: number of cars 
 additionalNumCarInQueue = random.randint(0,5) +1
 print('additionalNumCarInQueue:' + str(additionalNumCarInQueue) )
 
+
+### MAIN #####################################################
+
+Q = EventQueue()
+
+
 Q.insert(nocar(0))
 
 S = State()
 
-print("\033[0;31;40m Red\033[0;32;40m Green\033[1;33;40m Yellow\033[0;37;40m")
 #Main driver
 # Processing events until the queue is Q is empty
 while Q.notEmpty():
     e = Q.next()
     print( e )
+    #print("previous state green:"+str(S.green))
+    #print("previous state yellow:"+str(S.yellow))
+    #print("previous state red:"+str(S.red))
     e.action(Q,S)
