@@ -14,13 +14,13 @@ from itertools import cycle
     #car queue function ----------------------ok
     #continuation of change in lights---------ok
     #time to control the speed to simulation--ok    
-
+\t\t\t\t\033[0;32;40m Green\t\t\033[0;31;40m Red\033[0;37;40m
 """
 
 
 lights = {"Green": 0, "Yellow": 1, "Red": 2}
-main_street_light_state = "Green"
-second_street_light_state = "Red"
+main_street_light_state = "\033[0;32;40mGreen\033[0;37;40m"
+second_street_light_state = "\033[0;31;40m Red\033[0;37;40m"
 global_timer = 0
 stop_controller = False
 car_detected = False
@@ -42,14 +42,14 @@ class g2y(event):
         return "g2y"
     duration = 180
     def set_lights(self):
-        super().set_lights("Green", "Red")
+        super().set_lights("\033[0;32;40mGreen\033[0;37;40m", "\033[0;31;40m Red\033[0;37;40m")
 
 class y2r(event):
     def __str__(self):
         return "y2r"
     duration = 5
     def set_lights(self):
-        super().set_lights("Yellow", "Red")
+        super().set_lights("\033[1;33;40m Yellow\033[0;37;40m", "\033[0;31;40m Red\033[0;37;40m")
 
 
 class r2g1(event):
@@ -57,14 +57,14 @@ class r2g1(event):
         return "r2g1"
     duration = 50
     def set_lights(self):
-        super().set_lights("Red", "Green")
+        super().set_lights("\033[0;31;40m Red\033[0;37;40m", "\033[0;32;40mGreen\033[0;37;40m")
 
 class r2g2(event):
     def __str__(self):
         return "r2g2"
     duration = 5
     def set_lights(self):
-        super().set_lights("Red", "Yellow")
+        super().set_lights("\033[0;31;40m Red\033[0;37;40m", "\033[1;33;40m Yellow\033[0;37;40m")
 
 def controller(event):
     global global_timer, stop_controller, car_detected
